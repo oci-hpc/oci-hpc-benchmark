@@ -12,9 +12,9 @@ linpack_NB=192
 #Get Intel MPI
 mkdir /tmp/intel
 cd /tmp/intel
-wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/7BR1vkeBqaxr1ot0jNSbpQumqdqSFXEhLf1HR1YLJEc/n/hpc/b/HPC_BENCHMARKS/o/intel_mpi_2018.1.163.tgz -O - | tar zx
+wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/dB-x9RA2y5oOdx1zk-zJfdfljjRkr3kVjq6gjyfwebw/n/hpc/b/HPC_BENCHMARKS/o/intel_mpi_2018.1.163.tgz -O - | tar zx
 ./install.sh --silent=silent.cfg
-export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:$PATH
+echo export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:$PATH >> ~/.bashrc
 
 #HPCG
 mkdir ~/hpcg
@@ -42,7 +42,7 @@ chmod +x stream.96GB
 KMP_AFFINITY=scatter ./stream.96GB > stream_output.out
 #BEST RATE MB/s
 grep Triad *.out | awk '{ print $2 }'
-
+: '
 #AGGREGATE RESULTS
 #Quantum Espresso
 mkdir ~/qe
@@ -56,4 +56,4 @@ mkdir ~/namd
 cd ~/namd
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/BoNe4vX_jcn3YcWBRd8kLsYvkgqBwsBwmHM5s-bHNMU/n/hpc/b/HPC_BENCHMARKS/o/namd2
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/dNrmuN2aryTg2WRQ1uLWO1zdOJjZN4fhNGnm7zG9G6Q/n/hpc/b/HPC_BENCHMARKS/o/namd_stmv_benchmark.tgz -O - | tar zx
-
+'
