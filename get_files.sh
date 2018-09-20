@@ -14,7 +14,7 @@ mkdir /tmp/intel
 cd /tmp/intel
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/dB-x9RA2y5oOdx1zk-zJfdfljjRkr3kVjq6gjyfwebw/n/hpc/b/HPC_BENCHMARKS/o/intel_mpi_2018.1.163.tgz -O - | tar zx
 ./install.sh --silent=silent.cfg
-echo export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:$PATH >> ~/.bashrc
+echo export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:'$PATH' >> ~/.bashrc
 
 #HPCG
 mkdir ~/hpcg
