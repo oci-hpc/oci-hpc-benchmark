@@ -9,6 +9,7 @@ linpack_P=1
 linpack_Q=2
 linpack_NB=192
 
+
 #Get Intel MPI
 mkdir /tmp/intel
 cd /tmp/intel
@@ -16,9 +17,12 @@ wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/dB-x9RA2y5oOdx1zk-zJfd
 ./install.sh --silent=silent.cfg
 echo export PATH=/opt/intel/compilers_and_libraries_2018.1.163/linux/mpi/intel64/bin:'$PATH' >> ~/.bashrc
 
+
+SHARE_DIR=/mnt/blk/share/
+mkdir -p $SHARE_DIR
 #HPCG
-mkdir ~/hpcg
-cd ~/hpcg
+mkdir $SHARE_DIR/hpcg
+cd $SHARE_DIR/hpcg
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/zptF4eHuxCyS5UsBjiiIIegTzySAXdf4BOdy_HGGWYQ/n/hpc/b/HPC_BENCHMARKS/o/hpcg-bin.tgz -O - | tar zx
 cd hpcg-bin
 #mpirun -np 3 -ppn 3 -hostfile $hostlist ./xhpcg
@@ -26,17 +30,17 @@ cd hpcg-bin
 grep VALID HPCG-Benchmark* | awk '{ print $10 }'
 
 #HPL
-mkdir ~/hpl
-cd ~/hpl
+mkdir $SHARE_DIR/hpl
+cd $SHARE_DIR/hpl
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/QL7Bbs7G1OqPM5i4nHTxn7FzCZh2xuPC2H3eebzGCMg/n/hpc/b/HPC_BENCHMARKS/o/hpl.tgz -O - | tar zx
-cd ~/hpl/hpl
+cd $SHARE_DIR/hpl/hpl
 #mpirun -np 2 -perhost 2 -hostfile $hostlist ./xhpl_intel64_static -n $linpack_N -p $linpack_P -q $linpack_Q -nb $linpack_NB > hpl_output.out 
 #GFLOPS
 #grep WC00C2R2 *.out | awk '{ print $7 }'
 
 #STREAM
-mkdir ~/stream
-cd ~/stream
+mkdir $SHARE_DIR/stream
+cd $SHARE_DIR/stream
 wget https://objectstorage.us-phoenix-1.oraclecloud.com/p/Aa4DtCkuLXVw7oc1d2oirEcHJ13UWjSeMPlilKobnBU/n/hpc/b/HPC_BENCHMARKS/o/stream.96GB
 chmod +x stream.96GB
 #KMP_AFFINITY=scatter ./stream.96GB > stream_output.out
