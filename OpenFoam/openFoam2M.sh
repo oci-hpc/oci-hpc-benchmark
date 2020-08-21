@@ -26,8 +26,9 @@ MACHINEFILE=$6
 MYSQL_HOST=$7
 MYSQL_USER=$8
 MYSQL_PWD=$9
+OBJSTR_PAR=${10}
  
- 
+
 #MPI FLAGS VARIABLES:
 MPI_FLAGS=""
  
@@ -150,6 +151,11 @@ RESULTS_FOLDER=OpenFOAM-results_$MODEL_$CELLS'M_'`date +%Y%m%d_%H%M%S`
 mkdir $RESULTS_FOLDER
 mv log.* TIME.txt $RESULTS_FOLDER/
      
-#need to write logs to object storage or an output file.
+#write logs to object storage
+echo "Uploading logs to Object Storage"
+for file in $RESULTS_FOLDER/*; do
+    FILENAME=$file
+    curl -X PUT --data-binary ''@$FILENAME'' $OBJSTR_PAR$FILENAME
+done
  
-#need to collect system info and write to database
+
