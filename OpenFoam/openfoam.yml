@@ -10,11 +10,19 @@
     yum:
       name: mysql
       state: latest
-  - name: wget Install
+  - name: wget install intelmpi openfoam8
+    get_url: 
+      url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/96Um0TDiq3Y9CuBknloaOwaAdq6yS9XQ4h4dK3mpE6c/n/hpc/b/HPC_APPS/o/OpenFOAM-8_GCC_IMPI2019.tar
+      dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8_GCC_IMPI2019.tar"
+  - name: untar intelmpi openfoam8
+    unarchive:
+      src: "{{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8_GCC_IMPI2019.tar"
+      dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/"
+  - name: wget install openmpi openfoam7 
     get_url:
       url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/f48lM3aXtcEiCGJihz-sxpH808zie7VEbBHbihuZ2YI/n/hpc/b/HPC_APPS/o/openfoam7_OL77_RDMA.tar
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/openfoam7_OL77_RDMA.tar"
-  - name: untar Openfoam
+  - name: untar openmpi openfoam7
     unarchive:
       src: "{{vars.nfs_mount_path}}/OpenFOAM/install/openfoam7_OL77_RDMA.tar"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/"
