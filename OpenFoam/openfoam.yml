@@ -71,7 +71,7 @@
       line: "{{ansible_host}} cpu=36"
       create: yes
   - name: add hostname to intel mpi hostfile
-      lineinfile:
+    lineinfile:
       path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_intel"
       line: "{{ansible_host}}:36"
       create: yes
