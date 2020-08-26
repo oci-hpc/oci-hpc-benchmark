@@ -19,28 +19,42 @@
     unarchive:
       src: "{{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8_GCC_IMPI2019.tar"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/"
-  - name: wget install openmpi openfoam7 
+  - name: wget install openmpi openfoam8
     get_url:
-      url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/f48lM3aXtcEiCGJihz-sxpH808zie7VEbBHbihuZ2YI/n/hpc/b/HPC_APPS/o/openfoam7_OL77_RDMA.tar
-      dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/openfoam7_OL77_RDMA.tar"
-  - name: untar openmpi openfoam7
+      url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/z7hUYwf4ukCAAJOaxPYyn31T3PXN7yLLHjhgT9Hv7eo/n/hpc/b/HPC_APPS/o/OpenFOAM-8_GCC_OPENMPI3.1.1rc.tar
+      dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8_GCC_OPENMPI3.1.1rc.tar"
+  - name: untar openmpi openfoam8
     unarchive:
-      src: "{{vars.nfs_mount_path}}/OpenFOAM/install/openfoam7_OL77_RDMA.tar"
+      src: "{{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8_GCC_OPENMPI3.1.1rc.tar"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/install/"
   - name: mkdir
     file:
       path: "{{vars.nfs_mount_path}}/OpenFOAM/models"
       state: directory
-  - name: wget benchmark
+  - name: wget motorbike model 
     get_url:
       url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/V7-M6bL-HWGKNLiZ2iCiKdG3ehzs3nkjwX6_zDNEbSM/n/hpc/b/HPC_BENCHMARKS/o/motorbike_RDMA.tgz
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
-  - name: untar Openfoam
+  - name: untar Openfoam motorbike 
     unarchive:
       src: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/"
 - hosts: compute
   tasks:
+  - name: add source line (intel)
+    lineinfile:
+      path: /home/opc/.bashrc
+      line: "source /opt/intel/compilers_and_libraries_2019.4.243/linux/mpi/intel64/bin/mpivars.sh"
+      create: yes
+  - name: export MPI_ROOT (intel)
+    lineinfile:
+      path: /home/opc/.bashrc
+      line: export MPI_ROOT=/opt/intel/compilers_and_libraries_2019.4.243/linux/mpi
+      create: yes
+  - name: add source openfoam8 bashrc
+    lineinfile:
+      path: /home/opc/.bashrc
+      line: "source {{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM/OpenFOAM-8/etc/bashrc"
   - name: Add PATH line
     lineinfile:
       path: /home/opc/.bashrc
@@ -51,13 +65,13 @@
       path: /home/opc/.bashrc
       line: export LD_LIBRARY_PATH=/usr/mpi/gcc/openmpi-3.1.1rc1/lib/:$LD_LIBRARY_PATH
       create: yes
-  - name: Add source line
+  - name: Add hostname to openmpi hostfile
     lineinfile:
-      path: /home/opc/.bashrc
-      line: "source {{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM/OpenFOAM-7/etc/bashrc"
-      create: yes
-  - name: Add hostname to hostfile
-    lineinfile:
-      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile"
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_openmpi"
       line: "{{ansible_host}} cpu=36"
+      create: yes
+  - name: add hostname to intel mpi hostfile
+      lineinfile:
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_intel"
+      line: "{{ansible_host}}:36"
       create: yes

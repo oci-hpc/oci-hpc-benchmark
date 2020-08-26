@@ -32,12 +32,7 @@ OBJSTR_PAR=${10}
 #MPI FLAGS VARIABLES:
 MPI_FLAGS=""
  
-RDMA_FLAGS_INTEL="-iface enp94s0f0 \
--genv I_MPI_FABRICS=shm:dapl -genv DAT_OVERRIDE=/etc/dat.conf \
--genv I_MPI_DAT_LIBRARY=/usr/lib64/libdat2.so \
--genv I_MPI_DAPL_PROVIDER=ofa-v2-cma-roe-enp94s0f0 \
--genv I_MPI_FALLBACK=0 -genv I_MPI_PIN_PROCESSOR_LIST=0-35 \
--genv I_MPI_PROCESSOR_EXCLUDE_LIST=36-71"
+RDMA_FLAGS_INTEL="iface enp94s0f0 -genv I_MPI_FABRICS=shm:dapl -genv DAT_OVERRIDE=/etc/dat.conf -genv I_MPI_DAT_LIBRARY=/usr/lib64/libdat2.so -genv I_MPI_DAPL_PROVIDER=ofa-v2-cma-roe-enp94s0f0 -genv I_MPI_FALLBACK=0 -genv I_MPI_PIN_PROCESSOR_LIST=0-35 -genv I_MPI_PROCESSOR_EXCLUDE_LIST=36-71 I_MPI_PIN_PROCESSOR_LIST=allcores:map=spread"
  
 RDMA_FLAGS_OPENMPI="-mca btl self -x UCX_TLS=rc,self,sm \
 -x HCOLL_ENABLE_MCAST_ALL=0 -mca coll_hcoll_enable 0 \
@@ -50,8 +45,8 @@ RDMA_FLAGS_PLATFORM="-intra=shm -e MPI_HASIC_UDAPL=ofa-v2-cma-roe-enp94s0f0 \
  
 #SET RDMA FLAGS
 if [ "$MPI_NAME" == "intel" ]; then
-    MPI_FLAGS=$RDMA_FLAGS_INTEL
-    source /etc/opt/oci-hpc/bashrc/.bashrc_intelmpi
+    #MPI_FLAGS=$RDMA_FLAGS_INTEL
+    #source /etc/opt/oci-hpc/bashrc/.bashrc_intelmpi
     MPI_VERSION=`mpirun -version | awk 'NR==1'`
 elif [ "$MPI_NAME" == "openmpi" ]; then
     MPI_FLAGS=$RDMA_FLAGS_OPENMPI
