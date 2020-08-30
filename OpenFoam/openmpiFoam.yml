@@ -44,7 +44,7 @@
       line: "source {{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8/etc/bashrc"
   - name: Add hostname to openmpi hostfile
     lineinfile:
-      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_openmpi"
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile"
       line: "{{ansible_host}} cpu=36"
       create: yes
 - hosts: compute
