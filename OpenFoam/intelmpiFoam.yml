@@ -1,16 +1,11 @@
 - hosts: "{{groups.compute[0]}}"
   gather_facts: no
   connection: local
-  become: true
   tasks:
   - name: mkdir
     file:
       path: "{{vars.nfs_mount_path}}/OpenFOAM/install"
       state: directory
-  - name: install mysql
-    yum:
-      name: mysql
-      state: latest
   - name: wget install intelmpi openfoam8
     get_url: 
       url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/96Um0TDiq3Y9CuBknloaOwaAdq6yS9XQ4h4dK3mpE6c/n/hpc/b/HPC_APPS/o/OpenFOAM-8_GCC_IMPI2019.tar
@@ -58,3 +53,10 @@
       path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile"
       line: "{{ansible_host}}:36"
       create: yes
+- hosts: compute
+  become: true
+  tasks:
+  - name: install mysql
+    yum:
+      name: mysql
+      state: latest

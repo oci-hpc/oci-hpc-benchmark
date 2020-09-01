@@ -1,16 +1,11 @@
 - hosts: "{{groups.compute[0]}}"
   gather_facts: no
   connection: local
-  become: true
   tasks:
   - name: mkdir
     file:
       path: "{{vars.nfs_mount_path}}/OpenFOAM/install"
       state: directory
-  - name: install mysql
-    yum:
-      name: mysql
-      state: latest
   - name: wget install openmpi openfoam8
     get_url:
       url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/z7hUYwf4ukCAAJOaxPYyn31T3PXN7yLLHjhgT9Hv7eo/n/hpc/b/HPC_APPS/o/OpenFOAM-8_GCC_OPENMPI3.1.1rc.tar
@@ -23,11 +18,11 @@
     file:
       path: "{{vars.nfs_mount_path}}/OpenFOAM/models"
       state: directory
-  - name: wget motorbike model 
+  - name: wget motorbike model
     get_url:
       url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/tyE3Jo5JnlV0wS4ywoPJfyavXdXhmG4lRsAporCoOqg/n/hpc/b/HPC_BENCHMARKS/o/motorbike_RDMA.tgz
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
-  - name: untar Openfoam motorbike 
+  - name: untar Openfoam motorbike
     unarchive:
       src: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/"
@@ -49,6 +44,13 @@
       line: "source {{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8/etc/bashrc"
   - name: Add hostname to openmpi hostfile
     lineinfile:
-      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_openmpi"
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile"
       line: "{{ansible_host}} cpu=36"
       create: yes
+- hosts: compute
+  become: true
+  tasks:
+  - name: install mysql
+    yum:
+      name: mysql
+      state: latest
