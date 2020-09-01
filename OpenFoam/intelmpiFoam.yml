@@ -25,12 +25,18 @@
       state: directory
   - name: wget motorbike model 
     get_url:
-      url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/V7-M6bL-HWGKNLiZ2iCiKdG3ehzs3nkjwX6_zDNEbSM/n/hpc/b/HPC_BENCHMARKS/o/motorbike_RDMA.tgz
+      url: https://objectstorage.us-phoenix-1.oraclecloud.com/p/tyE3Jo5JnlV0wS4ywoPJfyavXdXhmG4lRsAporCoOqg/n/hpc/b/HPC_BENCHMARKS/o/motorbike_RDMA.tgz
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
   - name: untar Openfoam motorbike 
     unarchive:
       src: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/"
+  - name: copy allrun script to models
+    copy:
+      src: ~/bench/intelmpiAllrun.sh
+      dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/intelmpiAllrun.sh"
+  - name:  make allrun script executable
+    command: chmod +x "{{vars.nfs_mount_path}}/OpenFOAM/models/intelmpiAllrun.sh"
 - hosts: compute
   tasks:
   - name: add source line (intel)
