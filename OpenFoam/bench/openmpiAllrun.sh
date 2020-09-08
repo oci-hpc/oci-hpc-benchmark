@@ -139,3 +139,8 @@ for file in $RESULTS_FOLDER/*; do
     FILENAME=$file
     curl -X PUT --data-binary ''@$FILENAME'' $OBJSTR_PAR$FILENAME
 done
+
+#remove sourcing from bashrc so that openmpi can be run
+sed -i '/export PATH=\/usr\/mpi\/gcc\/openmpi-3.1.1rc1\/bin\/:$PATH/d' ~/.bashrc
+sed -i '/export LD_LIBRARY_PATH=\/usr\/mpi\/gcc\/openmpi-3.1.1rc1\/lib\/:$LD_LIBRARY_PATH/d' ~/.bashrc
+sed -i '/source \/mnt\/nfs-share\/OpenFOAM\/install\/OpenFOAM-8\/etc\/bashrc/d' ~/.bashrc

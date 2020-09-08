@@ -141,3 +141,8 @@ for file in $RESULTS_FOLDER/*; do
     curl -X PUT --data-binary ''@$FILENAME'' $OBJSTR_PAR$FILENAME
 done
 
+#remove sourcing from bashrc so that openmpi can be run
+sed -i '/source \/opt\/intel\/compilers_and_libraries_2019.4.243\/linux\/mpi\/intel64/d' ~/.bashrc
+sed -i '/MPI_ROOT=\/opt\/intel\/compilers_and_libraries_2019.4.243\/linux\/mpi/d' ~/.bashrc
+sed -i '/source \/mnt\/nfs-share\/OpenFOAM\/install\/OpenFOAM-8\/etc\/bashrc/d' ~/.bashrc
+
