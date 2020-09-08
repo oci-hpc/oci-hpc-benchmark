@@ -46,21 +46,32 @@ config_cluster() {
   #ssh $ip -i $private_key_path 'ansible-playbook ~/playbooks/slurm.yml'
   ssh $ip -i $private_key_path 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ~/bench/cfd.yml'
   #ssh $ip -i $private_key_path 'ansible-playbook ~/bench/fluent.yml'
+  
+  # Run using intel mpi
   ssh $ip -i $private_key_path 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ~/bench/intelmpiFoam.yml'
+  
+  # Run using open mpi 
+  # ssh $ip -i $private_key_path 'ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook ~/bench/openmpiFoam.yml'
 
 }
 
 benchmarks() {
   local ip=$(ocihpc get ip | grep opc@ | cut -d " " -f2)
   
+  # intel mpi
   ssh -T $ip -i $private_key_path << EOF
   ssh -T hpc-node-1
   cd /mnt/nfs-share/OpenFOAM/models/
   ./intelmpiAllrun.sh motorbike $nodes 36 test ./hostfile 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/
 EOF
 
-  #ssh $ip -i $private_key_path 'ssh hpc-node-1 /mnt/nfs-share/OpenFOAM/models/intelmpiAllrun.sh motorbike ${nodes} 36 test ./hostfile 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/'
-  #echo "benchmark skip"
+  # open mpi
+  #ssh -T $ip -i $private_key_path << EOF
+  #ssh -T hpc-node-1
+  #cd /mnt/nfs-share/OpenFOAM/models/
+  #./openmpiAllrun.sh motorbike $nodes 36 test ./hostfile 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/
+#EOF
+  
 }
 
 log_results() {
