@@ -81,7 +81,7 @@ benchmarks() {
   ssh -T $ip -i $private_key_path << EOF
     ssh -T hpc-node-1
     cd /mnt/nfs-share/OpenFOAM/models/
-    ./intelmpiAllrun.sh motorbike $nodes 36 test ./hostfile_intel 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/
+    ./intelmpiAllrun.sh motorbike $nodes 36 test ./hostfile_intel https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/
 EOF
   elif [[ "$mpiVersion" == "openmpi" ]]; then
     ssh -T $ip -i $private_key_path << EOF
