@@ -26,6 +26,12 @@
     unarchive:
       src: "{{vars.nfs_mount_path}}/OpenFOAM/models/motorbike_RDMA.tgz"
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/"
+  - name: copy allrun script to models
+    copy:
+      src: ~/bench/openmpiAllrun.sh
+      dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/openmpiAllrun.sh"
+  - name:  make allrun script executable
+    command: chmod +x "{{vars.nfs_mount_path}}/OpenFOAM/models/openmpiAllrun.sh"
 - hosts: compute
   tasks:
   - name: Add PATH line
@@ -44,7 +50,7 @@
       line: "source {{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8/etc/bashrc"
   - name: Add hostname to openmpi hostfile
     lineinfile:
-      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile"
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_openmpi"
       line: "{{ansible_host}} cpu=36"
       create: yes
 - hosts: compute
