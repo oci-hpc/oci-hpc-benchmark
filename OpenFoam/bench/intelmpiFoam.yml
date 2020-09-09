@@ -50,7 +50,7 @@
       line: "source {{vars.nfs_mount_path}}/OpenFOAM/install/OpenFOAM-8/etc/bashrc"
   - name: add hostname to intel mpi hostfile
     lineinfile:
-      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile"
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/hostfile_intel"
       line: "{{ansible_host}}:36"
       create: yes
 - hosts: compute
