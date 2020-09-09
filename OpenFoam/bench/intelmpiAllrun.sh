@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #GENERAL VARIABLES
-OpenFOAM_VERSION="OpenFOAM 8"
+OpenFOAM_VERSION="8"
 INSTANCE=BM.HPC2.36
 MPI_VERSION=""
 MODEL_VERS="N/A"
@@ -10,10 +10,13 @@ MODEL_VERS="N/A"
 #GET BASIC SYSTEM INFO
 OFED_VERS=`ofed_info -s`
 OS_VERS=`cat /etc/*-release | grep "PRETTY_NAME" | cut -d= -f2`
+OS_VERS="${OS_VERS%\"}"
+OS_VERS="${OS_VERS#\"}"
 KERNEL_VERS=`uname -r`
 HPC_TOOLS_VERS=N/A
 HPC_IMAGE_VERS=""  ###TODO - in the terraform scripts, have one of the outputs be gather the image version details to export
 HOSTNAME=`hostname`
+dt=$( date '+%FT%H:%M:%S'.123Z )
 
 
 #COMMAND LINE VARIABLES:
@@ -22,10 +25,7 @@ NODES_ITER=$2
 PPN=$3
 COMMENT=$4
 MACHINEFILE=$5
-MYSQL_HOST=$6
-MYSQL_USER=$7
-MYSQL_PWD=$8
-OBJSTR_PAR=$9
+OBJSTR_PAR=$6
 
 
 #MPI FLAGS VARIABLES:
@@ -124,7 +124,7 @@ for NODES in $NODES_ITER; do
 
 
     #send data to the database
-    mysql -h $MYSQL_HOST --user $MYSQL_USER --password=$MYSQL_PWD -e "USE benchmarkData;INSERT INTO cae_runs VALUES ('$uid','OpenFOAM','$MODEL','$OpenFOAM_VERS','$INSTANCE','$HOSTNAME',$NODES,$PPN,$CORES,$CELLS,$EXECUTION_TIME,$SPEEDUP,$CELLSCORE,$SCALING,'$COMMENT',curdate(),'$MPI_VERSION','$OFED_VERS','$OS_VERS','$KERNEL_VERS','$HPC_TOOLS_VERS','$HPC_IMAGE_VERS', '$CMD_LINE : $MPI_FLAGS', '$MODEL_VERS');"
+    curl -i -X POST -H "Content-Type:application/json" -d '{"uniqueid": "'$UID'", "application": "OpenFOAM", "model": "'$MODEL'", "vers": "'$OpenFOAM_VERSION'", "instance": "'$INSTANCE'", "hostname": "'$HOSTNAME'", "nodes": "'$NODES'", "ppn": "'$PPN'", "cores": "'$CORES'", "cells": "'$CELLS'", "metric": "'$EXECUTION_TIME'", "speedup": "'$SPEEDUP'", "cellscore": "'$CELLSCORE'", "scaling": "'$SCALING'", "notes": "'$COMMENT'", "rundate": "'"$dt"'", "mpi_vers": "'"$MPI_VERSION"'", "ofed_vers": "'"$OFED_VERS"'", "os_vers": "'"$OS_VERS"'", "kernel_vers": "'"$KERNEL_VERS"'", "hpc_tools_vers": "'$HPC_TOOLS_VERS'", "hpc_image_vers": "'$HPC_IMAGE_VERS'", "cmd_line": "'"$CMD_LINE : $MPI_FLAGS"'", "model_vers": "'$MODEL_VERS'"}' "https://trceontjwuiabrm-benchmarkdb.adb.us-ashburn-1.oraclecloudapps.com/ords/benchmark/benchmark/hol/"
 done
 
 #capture logs
