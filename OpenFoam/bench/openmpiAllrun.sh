@@ -123,7 +123,7 @@ for NODES in $NODES_ITER; do
     echo "SCALING:" $SCALING
 
     #send data to the database
-    curl -i -X POST -H "Content-Type:application/json" -d '{"uniqueid": "'$UID'", "application": "OpenFOAM", "model": "'$MODEL'", "vers": "'$OpenFOAM_VERSION'", "instance": "'$INSTANCE'", "hostname": "'$HOSTNAME'", "nodes": "'$NODES'", "ppn": "'$PPN'", "cores": "'$CORES'", "cells": "'$CELLS'", "metric": "'$EXECUTION_TIME'", "speedup": "'$SPEEDUP'", "cellscore": "'$CELLSCORE'", "scaling": "'$SCALING'", "notes": "'$COMMENT'", "rundate": "'"$dt"'", "mpi_vers": "'"$MPI_VERSION"'", "ofed_vers": "'"$OFED_VERS"'", "os_vers": "'"$OS_VERS"'", "kernel_vers": "'"$KERNEL_VERS"'", "hpc_tools_vers": "'$HPC_TOOLS_VERS'", "hpc_image_vers": "'$HPC_IMAGE_VERS'", "cmd_line": "'"$CMD_LINE : $MPI_FLAGS"'", "model_vers": "'$MODEL_VERS'"}' "https://trceontjwuiabrm-benchmarkdb.adb.us-ashburn-1.oraclecloudapps.com/ords/benchmark/benchmark/hol/"
+    curl -i -X POST -H "Content-Type:application/json" -d '{"uniqueid": "'$UID'", "model": "'$MODEL'", "vers": "'$OpenFOAM_VERSION'", "instance": "'$INSTANCE'", "hostname": "'$HOSTNAME'", "nodes": "'$NODES'", "ppn": "'$PPN'", "cores": "'$CORES'", "cells": "'$CELLS'", "metric": "'$EXECUTION_TIME'", "speedup": "'$SPEEDUP'", "cellscore": "'$CELLSCORE'", "scaling": "'$SCALING'", "notes": "'$COMMENT'", "rundate": "'"$dt"'", "mpi_vers": "'"$MPI_VERSION"'", "ofed_vers": "'"$OFED_VERS"'", "os_vers": "'"$OS_VERS"'", "kernel_vers": "'"$KERNEL_VERS"'", "hpc_tools_vers": "'$HPC_TOOLS_VERS'", "hpc_image_vers": "'$HPC_IMAGE_VERS'", "cmd_line": "'"$CMD_LINE : $MPI_FLAGS"'", "model_vers": "'$MODEL_VERS'"}' "https://trceontjwuiabrm-benchmarkdb.adb.us-ashburn-1.oraclecloudapps.com/ords/benchmark/openfoam/benchmark/"
 done
 
 #capture logs
