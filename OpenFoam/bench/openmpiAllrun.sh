@@ -25,7 +25,10 @@ NODES_ITER=$2
 PPN=$3
 COMMENT=$4
 MACHINEFILE=$5
-OBJSTR_PAR=$6
+MYSQL_HOST=$6
+MYSQL_USER=$7
+MYSQL_PWD=$8
+OBJSTR_PAR=$9
 
 
 # MPI FLAGS
@@ -122,14 +125,22 @@ for NODES in $NODES_ITER; do
     echo "SPEEDUP:" $SPEEDUP
     echo "SCALING:" $SCALING
 
-    #send data to the database
+    
+    #send data to mysql database
+    mysql -h $MYSQL_HOST -u $MYSQL_USER -p $MYSQL_PWD -e "USE testdb;INSERT INTO kristen_test VALUES ('$UID','OpenFOAM','$MODEL','$OpenFOAM_VERS','$INSTANCE','$HOSTNAME',$NODES,$PPN,$CORES,$CELLS,$EXECUTION_TIME,$SPEEDUP,$CELLSCORE,$SCALING,'$COMMENT',NOW(),'$MPI_VERSION','$OFED_VERS','$OS_VERS','$KERNEL_VERS','$HPC_TOOLS_VERS','$HPC_IMAGE_VERS',$CMD_LINE : $MPI_FLAGS', '$MODEL_VERS');"
+
+
+    #send data to autonomous data warehouse
     curl -i -X POST -H "Content-Type:application/json" -d '{"uniqueid": "'$UID'", "model": "'$MODEL'", "vers": "'$OpenFOAM_VERSION'", "instance": "'$INSTANCE'", "hostname": "'$HOSTNAME'", "nodes": "'$NODES'", "ppn": "'$PPN'", "cores": "'$CORES'", "cells": "'$CELLS'", "metric": "'$EXECUTION_TIME'", "speedup": "'$SPEEDUP'", "cellscore": "'$CELLSCORE'", "scaling": "'$SCALING'", "notes": "'$COMMENT'", "rundate": "'"$dt"'", "mpi_vers": "'"$MPI_VERSION"'", "ofed_vers": "'"$OFED_VERS"'", "os_vers": "'"$OS_VERS"'", "kernel_vers": "'"$KERNEL_VERS"'", "hpc_tools_vers": "'$HPC_TOOLS_VERS'", "hpc_image_vers": "'$HPC_IMAGE_VERS'", "cmd_line": "'"$CMD_LINE : $MPI_FLAGS"'", "model_vers": "'$MODEL_VERS'"}' "https://trceontjwuiabrm-benchmarkdb.adb.us-ashburn-1.oraclecloudapps.com/ords/benchmark/openfoam/benchmark/"
+
 done
+
 
 #capture logs
 RESULTS_FOLDER=OpenFOAM-results_$MODEL_$CELLS'M_'`date +%Y%m%d_%H%M%S`
 mkdir $RESULTS_FOLDER
 mv log.* TIME.txt $RESULTS_FOLDER/
+
 
 #write logs to object storage
 echo "Uploading logs to Object Storage"
@@ -138,7 +149,9 @@ for file in $RESULTS_FOLDER/*; do
     curl -X PUT --data-binary ''@$FILENAME'' $OBJSTR_PAR$FILENAME
 done
 
+
 #remove sourcing from bashrc so that openmpi can be run
 sed -i '/export PATH=\/usr\/mpi\/gcc\/openmpi-3.1.1rc1\/bin\/:$PATH/d' ~/.bashrc
 sed -i '/export LD_LIBRARY_PATH=\/usr\/mpi\/gcc\/openmpi-3.1.1rc1\/lib\/:$LD_LIBRARY_PATH/d' ~/.bashrc
 sed -i '/source \/mnt\/nfs-share\/OpenFOAM\/install\/OpenFOAM-8\/etc\/bashrc/d' ~/.bashrc
+

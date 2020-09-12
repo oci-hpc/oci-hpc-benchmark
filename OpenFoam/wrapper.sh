@@ -55,7 +55,7 @@ config_cluster() {
   local ip=$(ocihpc get ip | grep opc@ | cut -d " " -f2)
   
   # Put files on bastion
-  scp -i $private_key_path -rp /Users/joboyle/oci-hpc-benchmark/OpenFoam/bench $ip:~/bench
+  scp -i $private_key_path -rp /Users/dsheth/ds/BigCompute/Benchmarking/oci-hpc-benchmark/OpenFoam/bench $ip:~/bench
   
   #ssh $ip -i $private_key_path 'ansible-playbook ~/playbooks/slurm.yml'
   
@@ -81,13 +81,13 @@ benchmarks() {
   ssh -T $ip -i $private_key_path << EOF
     ssh -T hpc-node-1
     cd /mnt/nfs-share/OpenFOAM/models/
-    ./intelmpiAllrun.sh motorbike $nodes 36 test ./hostfile_intel https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/
+    ./intelmpiAllrun.sh motorbike 2 36 test ./hostfile_intelmpi 129.146.97.41 dhvsheth +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/Tv53eXXICVZE2-kMvWOWaQ6qfGfpxBn9y9sw2KpI-cU/n/hpc_limited_availability/b/OpenFoamRuns/o/
 EOF
   elif [[ "$mpiVersion" == "openmpi" ]]; then
     ssh -T $ip -i $private_key_path << EOF
     ssh -T hpc-node-1
     cd /mnt/nfs-share/OpenFOAM/models/
-    ./openmpiAllrun.sh motorbike $nodes 36 test ./hostfile_openmpi 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/
+    ./openmpiAllrun.sh motorbike $nodes 36 test ./hostfile_openmpi 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/Tv53eXXICVZE2-kMvWOWaQ6qfGfpxBn9y9sw2KpI-cU/n/hpc_limited_availability/b/OpenFoamRuns/o/
 EOF
 fi
   
