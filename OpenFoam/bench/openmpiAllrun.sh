@@ -53,30 +53,30 @@ for NODES in $NODES_ITER; do
     ./Allclean
 
     #Identify the domain decomposition in decomposeParDict based on the number of cores
-    case "$CORES" in
-       "36") X=9; Y=2; Z=2;;
-       "72") X=9; Y=2; Z=4;;
-       "108") X=9; Y=3; Z=4;;
-       "144") X=9; Y=2; Z=8;;
-       "180") X=9; Y=10; Z=2;;
-       "216") X=12; Y=6; Z=3;;
-       "252") X=12; Y=7; Z=3;;
-       "288") X=12; Y=6; Z=4;;
-       "324") X=12; Y=9; Z=3;;
-       "360") X=12; Y=6; Z=5;;
-       "396") X=11; Y=4; Z=9;;
-       "432") X=12; Y=6; Z=6;;
-       "468") X=13; Y=9; Z=4;;
-       "504") X=14; Y=6; Z=6;;
-       "540") X=9; Y=12; Z=5;;
-       "576") X=12; Y=12; Z=4;;
-       *) X=$CORES; Y=1; Z=1;;
-    esac
+    #case "$CORES" in
+    #   "36") X=9; Y=2; Z=2;;
+    #   "72") X=9; Y=2; Z=4;;
+    #   "108") X=9; Y=3; Z=4;;
+    #   "144") X=9; Y=2; Z=8;;
+    #   "180") X=9; Y=10; Z=2;;
+    #   "216") X=12; Y=6; Z=3;;
+    #   "252") X=12; Y=7; Z=3;;
+    #   "288") X=12; Y=6; Z=4;;
+    #   "324") X=12; Y=9; Z=3;;
+    #   "360") X=12; Y=6; Z=5;;
+    #   "396") X=11; Y=4; Z=9;;
+    #   "432") X=12; Y=6; Z=6;;
+    #   "468") X=13; Y=9; Z=4;;
+    #   "504") X=14; Y=6; Z=6;;
+    #   "540") X=9; Y=12; Z=5;;
+    #   "576") X=12; Y=12; Z=4;;
+    #   *) X=$CORES; Y=1; Z=1;;
+    #esac
 
     echo Mesh Dimensions: `cat system/blockMeshDict | grep simpleGrading | awk '{print $10, $11, $12}' `| tee -a TIME.txt
-    echo Cores:$CORES: ${X}, ${Y}, ${Z} | tee -a TIME.txt
+    #echo Cores:$CORES: ${X}, ${Y}, ${Z} | tee -a TIME.txt
 
-    sed "s/NP_to_replace/${CORES}/" system/decomposeParDict_tmp | sed "s/X_to_replace/${X}/" | sed "s/Y_to_replace/${Y}/" | sed "s/Z_to_replace/${Z}/" > system/decomposeParDict
+    sed "s/NP_to_replace/${CORES}/" system/decomposeParDict_tmp  > system/decomposeParDict
 
 
     # Source tutorial run functions
@@ -127,7 +127,7 @@ for NODES in $NODES_ITER; do
 
     
     #send data to mysql database
-    mysql -h $MYSQL_HOST -u $MYSQL_USER -p $MYSQL_PWD -e "USE testdb;INSERT INTO kristen_test VALUES ('$UID','OpenFOAM','$MODEL','$OpenFOAM_VERS','$INSTANCE','$HOSTNAME',$NODES,$PPN,$CORES,$CELLS,$EXECUTION_TIME,$SPEEDUP,$CELLSCORE,$SCALING,'$COMMENT',NOW(),'$MPI_VERSION','$OFED_VERS','$OS_VERS','$KERNEL_VERS','$HPC_TOOLS_VERS','$HPC_IMAGE_VERS',$CMD_LINE : $MPI_FLAGS', '$MODEL_VERS');"
+    mysql -h $MYSQL_HOST --user $MYSQL_USER --password=$MYSQL_PWD -e "USE testdb;INSERT INTO kristen_test VALUES ('$UID','OpenFOAM','$MODEL','$OpenFOAM_VERSION','$INSTANCE','$HOSTNAME',$NODES,$PPN,$CORES,$CELLS,$EXECUTION_TIME,$SPEEDUP,$CELLSCORE,$SCALING,'$COMMENT',NOW(),'$MPI_VERSION','$OFED_VERS','$OS_VERS','$KERNEL_VERS','$HPC_TOOLS_VERS','$HPC_IMAGE_VERS','$CMD_LINE : $MPI_FLAGS', '$MODEL_VERS');"
 
 
     #send data to autonomous data warehouse

@@ -32,6 +32,11 @@
       dest: "{{vars.nfs_mount_path}}/OpenFOAM/models/intelmpiAllrun.sh"
   - name:  make allrun script executable
     command: chmod +x "{{vars.nfs_mount_path}}/OpenFOAM/models/intelmpiAllrun.sh"
+  - name: replace decomposition method
+    replace:
+      path: "{{vars.nfs_mount_path}}/OpenFOAM/models/system/decomposeParDict_tmp"
+      regexp: 'method          hierarchical;'
+      replace: "method          scotch;"
 - hosts: compute
   tasks:
   - name: add source line (intel)
