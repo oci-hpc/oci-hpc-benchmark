@@ -5,6 +5,9 @@ OpenFOAM_VERSION="8"
 INSTANCE=BM.HPC2.36
 MPI_VERSION=""
 MODEL_VERS="N/A"
+MPI_NAME="openmpi"
+MPI_VERSION_NUMBER="3.1.1"
+APPLICATION="openfoam"
 
 
 #GET BASIC SYSTEM INFO
@@ -131,7 +134,7 @@ for NODES in $NODES_ITER; do
 
 
     #send data to autonomous data warehouse
-    curl -i -X POST -H "Content-Type:application/json" -d '{"uniqueid": "'$UID'", "model": "'$MODEL'", "vers": "'$OpenFOAM_VERSION'", "instance": "'$INSTANCE'", "hostname": "'$HOSTNAME'", "nodes": "'$NODES'", "ppn": "'$PPN'", "cores": "'$CORES'", "cells": "'$CELLS'", "metric": "'$EXECUTION_TIME'", "speedup": "'$SPEEDUP'", "cellscore": "'$CELLSCORE'", "scaling": "'$SCALING'", "notes": "'$COMMENT'", "rundate": "'"$dt"'", "mpi_vers": "'"$MPI_VERSION"'", "ofed_vers": "'"$OFED_VERS"'", "os_vers": "'"$OS_VERS"'", "kernel_vers": "'"$KERNEL_VERS"'", "hpc_tools_vers": "'$HPC_TOOLS_VERS'", "hpc_image_vers": "'$HPC_IMAGE_VERS'", "cmd_line": "'"$CMD_LINE : $MPI_FLAGS"'", "model_vers": "'$MODEL_VERS'"}' "https://trceontjwuiabrm-benchmarkdb.adb.us-ashburn-1.oraclecloudapps.com/ords/benchmark/openfoam/benchmark/"
+    curl -i -X POST -H "Content-Type:application/json" -d '{"uniqueid": "'$UID'", "application": "'$APPLICATION'" ,"model": "'$MODEL'", "vers": "'$OpenFOAM_VERSION'", "instance": "'$INSTANCE'", "hostname": "'$HOSTNAME'", "nodes": "'$NODES'", "ppn": "'$PPN'", "cores": "'$CORES'", "cells": "'$CELLS'", "metric": "'$EXECUTION_TIME'", "speedup": "'$SPEEDUP'", "cellscore": "'$CELLSCORE'", "scaling": "'$SCALING'", "notes": "'$COMMENT'", "rundate": "'"$dt"'", "mpi_vers": "'"$MPI_VERSION"'", "mpi_name": "'$MPI_NAME'", "mpi_version_number": "'$MPI_VERSION_NUMBER'" , "ofed_vers": "'"$OFED_VERS"'", "os_vers": "'"$OS_VERS"'", "kernel_vers": "'"$KERNEL_VERS"'", "hpc_tools_vers": "'$HPC_TOOLS_VERS'", "hpc_image_vers": "'$HPC_IMAGE_VERS'", "cmd_line": "'"$CMD_LINE : $MPI_FLAGS"'", "model_vers": "'$MODEL_VERS'"}' "https://trceontjwuiabrm-benchmarkdb.adb.us-ashburn-1.oraclecloudapps.com/ords/benchmark/benchmark_runs/benchmark/"
 
 done
 
