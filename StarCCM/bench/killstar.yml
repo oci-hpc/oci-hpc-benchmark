@@ -1,0 +1,6 @@
+- hosts: compute
+  tasks:
+  - name: Kill processes
+    shell: "ps -ef | grep -v grep | grep -w star | awk '{print $2}'"
+  - name: Kill processes Again
+    shell: pkill -f star

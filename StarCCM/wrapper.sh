@@ -1,23 +1,6 @@
 #!/bin/bash
 # User Prompt 
 
-# Get OpenFoam MPI Version
-getFoamMpi() {
-  echo 'Which mpi version would you like to run (intelmpi or openmpi):'
-  read mpiVersion
-  
-  # Validate
-  if [[ "$mpiVersion" == "intelmpi" ]]; then
-    mpiVersion=intelmpi
-  elif [[ "$mpiVersion" == "openmpi" ]]; then
-    mpiVersion=openmpi
-  else
-    echo "incorrect format... Using intelmpi as default"
-    mpiVersion=intelmpi
-    #statements
-  fi
-}
-
 # STACK VARIABLES
 stack=ClusterNetwork
 nodes=2
@@ -25,7 +8,21 @@ region=eu-amsterdam-1
 compartment=ocid1.compartment.oc1..aaaaaaaauwpnmrdq3jtsimys7ner4mwpyizozdn67ln33yeasarg6kmivuaq
 private_key_path=~/.ssh/id_rsa
 
-
+echo "getting user input"
+# Get user input
+while getopts "n:p:c:v:d:t:b:f:" flag; do
+    case ${flag} in
+        n) nodes=${OPTARG};;
+        p) ppn=${OPTARG};;
+        c) comment=${OPTARG};;
+        v) mpiVersion=${OPTARG};;
+        d) podKey=${OPTARG};;
+        t) testType=${OPTARG};;
+        b) benchITS=${OPTARG};;
+        f) conf=${OPTARG};;
+    esac
+done
+shift $((OPTIND -1))
 
 init_ocihpc() {
   [ ! -f "./ClusterNetwork.zip" ] && ocihpc init --stack ClusterNetwork
@@ -65,13 +62,22 @@ config_cluster() {
 
 benchmarks() {
   local ip=$(ocihpc get ip | grep opc@ | cut -d " " -f2)
-  
-  ssh -T $ip -i $private_key_path << EOF
+
+  if [ $testType == "large" ]; then
+    ssh -T $ip -i $private_key_path << EOF
+    scp -p bench/starccmLarge.sh hpc-node-1:~/
+    ssh -T hpc-node-1
+    chmod +x starccmLarge.sh
+    ./starccmLarge.sh $nodes $ppn $mpiVersion $podKey 15.04.008 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/ $comment
+EOF
+  else
+    ssh -T $ip -i $private_key_path << EOF
     scp -p bench/starccmRun.sh hpc-node-1:~/
     ssh -T hpc-node-1
-    ./starccmRun.sh 36 36,72 intel 6/F1b1TRS1PQVMD98J94JQ 15.04.008 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/ test
+    chmod +x starccmRun.sh
+    ./starccmRun.sh $ppn $benchITS $mpiVersion $podKey 15.04.008 129.146.97.41 joboyle +ocihpc123456 https://objectstorage.us-ashburn-1.oraclecloud.com/p/pk4d4RaWnwqKQ9BNxOgdK_f4eGAWDhk-HV0psXibBVc/n/hpc_limited_availability/b/TestBucket/o/ $comment
 EOF
-  
+  fi 
 }
 
 log_results() {
@@ -86,10 +92,13 @@ main() {
 
   #echo "Launching Cluster"
   #launch_cluster
-
-  echo "Configuring"
-  config_cluster
-  echo "Configuration Complete"
+  if [ $conf == "no" ]; then
+    echo "not configuring..."
+  else
+    echo "Configuring"
+    config_cluster
+    echo "Configuration Complete"
+  fi
 
   echo "Benchmarking"
   benchmarks
